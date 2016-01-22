@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     int SIZE = 250;
     Set<String> selections;
     boolean multiSelection;
+    int selecitonLimit = 10;
 
     GalleryAdapter(int type, Context context) {
         selections = new HashSet<>();
@@ -51,6 +53,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    public void setSelecitonLimit(int selecitonLimit) {
+        this.selecitonLimit = selecitonLimit;
+    }
+
     public void setMultiSelection(boolean multiSelection) {
         this.multiSelection = multiSelection;
     }
@@ -59,7 +65,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(context)
-                .inflate(R.layout.gallery_item, parent, false);
+                .inflate(R.layout.fragment_gallery_item, parent, false);
         return new GalleryViewHolder(itemView);
     }
 
@@ -127,15 +133,21 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View view) {
                 if (onItemClickListener != null) {
                     if (multiSelection) {
-                        if (selections.size() != 0) {
-                            if (!selections.contains(path))
-                                selections.add(path);
-                            else
-                                selections.remove(path);
-                            notifyDataSetChanged();
+                        if (selections.size() < selecitonLimit) {
+                            if (selections.size() != 0) {
+                                if (!selections.contains(path))
+                                    selections.add(path);
+                                else
+                                    selections.remove(path);
+                                notifyDataSetChanged();
+                            }
+                            onItemClickListener.onItemClick(path);
+                        } else {
+                            Toast.makeText(context, "Maximum " + selecitonLimit + " items allowed", Toast.LENGTH_SHORT);
                         }
+                    } else {
+                        onItemClickListener.onItemClick(path);
                     }
-                    onItemClickListener.onItemClick(path);
                 }
             }
         });
