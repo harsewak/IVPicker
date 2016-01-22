@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="IVPickerTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <!--<style name="AppTheme" parent="BaseTheme" />-->
+
+    <!--<style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--&lt;!&ndash;<item name="colorControlHighlight">@color/accent_translucent</item> &ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="selectableItemBackground">@drawable/selectable_item_background</item>&ndash;&gt;-->
+    <!--</style>-->
+
+    <!--<color name="accent_translucent">#80FFEB3B</color>-->
+    <!--<color name="accent_bright">#FFF493</color>-->
+</resources>
