@@ -7,6 +7,7 @@ import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +27,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     Context context;
     int type;
     OnItemClickListener onItemClickListener;
-    int SIZE = 250;
+    int SIZE = 150;
     Set<String> selections;
     boolean multiSelection;
-    int selecitonLimit = 10;
+    int selectionLimit = 10;
 
     GalleryAdapter(int type, Context context) {
         selections = new HashSet<>();
@@ -53,8 +54,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public void setSelecitonLimit(int selecitonLimit) {
-        this.selecitonLimit = selecitonLimit;
+    public void setselectionLimit(int selectionLimit) {
+        this.selectionLimit = selectionLimit;
     }
 
     public void setMultiSelection(boolean multiSelection) {
@@ -133,7 +134,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View view) {
                 if (onItemClickListener != null) {
                     if (multiSelection) {
-                        if (selections.size() < selecitonLimit) {
+                        if (selections.size() < selectionLimit) {
                             if (selections.size() != 0) {
                                 if (!selections.contains(path))
                                     selections.add(path);
@@ -143,7 +144,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             }
                             onItemClickListener.onItemClick(path);
                         } else {
-                            Toast.makeText(context, "Maximum " + selecitonLimit + " items allowed", Toast.LENGTH_SHORT);
+                            Toast.makeText(context, "Maximum " + selectionLimit + " selection allowed", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         onItemClickListener.onItemClick(path);
@@ -186,9 +187,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... voids) {
+                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
                 Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(
                         context.getContentResolver(), id,
                         MediaStore.Images.Thumbnails.MICRO_KIND, null);
+                if (bitmap == null) {
+                    Log.d("GalleryAdapter", "image thumbnail bitmap is null");
+                }
                 return bitmap;
             }
 
@@ -212,11 +217,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... voids) {
+                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
                 Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(
                         context.getContentResolver(), id,
                         MediaStore.Video.Thumbnails.MICRO_KIND, null);
                 if (bitmap == null) {
                     bitmap = generateBitmap(path, SIZE);
+                    Log.d("GalleryAdapter", "video thumbnail bitmap is null");
                 }
                 return bitmap;
             }
