@@ -20,12 +20,17 @@ public class IVPicker extends AppCompatActivity implements Gallery.OnFragmentRes
 
 
     /**
-     * Key declarations
+     * Please make sure to set   <item name="windowNoTitle">true</item>
+     * <item name="windowActionBar">false</item> with your theme or make sure your theme should have parent="Theme.AppCompat.Light.NoActionBar" as parent theme
      */
     public static final String THEME = "Theme";
     public static final String IV_TYPE = "IVType";
-    // if passed #IVType is either Images or Videos then passed title will be set as action bar title
+    /**
+     * if passed #IVType is either Images or Videos then passed title will be set as action bar title
+     **/
     public static final String TITLE = "Title";
+    /***/
+    public static final String TITLE_ID = "TitleId";
     public static final String GRID_COL = "GridCol";
     public static final String MULTI_SELECTION = "MultiSelection";
     public static final String SELECTION_LIMIT = "SelectionLimit";
@@ -77,13 +82,16 @@ public class IVPicker extends AppCompatActivity implements Gallery.OnFragmentRes
         multiSelection = intent.getBooleanExtra(MULTI_SELECTION, false);
         gridColumns = intent.getIntExtra(GRID_COL, 0);
 
-
-        String title = intent.getStringExtra(TITLE);
-        if (!isValid(title)) {
-            title = "Select";
+        int titleId = intent.getIntExtra(TITLE_ID, 0);
+        if (titleId > 0) {
+            getSupportActionBar().setTitle(titleId);
+        } else {
+            String title = intent.getStringExtra(TITLE);
+            if (!isValid(title)) {
+                title = "Select";
+            }
+            getSupportActionBar().setTitle(title);
         }
-        getSupportActionBar().setTitle(title);
-
         //default type is IVType#IMAGES
         ivType = IVType.toIVType(intent.getIntExtra(IV_TYPE, 0));
         switch (ivType) {

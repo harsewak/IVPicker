@@ -14,7 +14,7 @@ public enum IVType {
     /**
      * @return IMAGES - if type not matched
      */
-    public static  IVType toIVType(int type) {
+    public static IVType toIVType(int type) {
         if (type == 0) {
             return IMAGES;
         } else if (type == 1) {
@@ -23,5 +23,9 @@ public enum IVType {
             return BOTH;
         }
         return IMAGES;
+    }
+
+    public int toInteger() {
+        return type;
     }
 }
