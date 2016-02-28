@@ -46,11 +46,14 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
             case Gallery.TYPE_VIDEOS:
                 String[] vColumns = {MediaStore.Video.Media.DATA, MediaStore.Video.Media._ID};
-                String vOrderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC";//MediaStore.Video.Media._ID;
+                String vOrderBy = MediaStore.Video.VideoColumns.DATE_TAKEN + " DESC";//MediaStore.Video.Media._ID;
+                String selection = MediaStore.Video.VideoColumns.SIZE + "!= ?";
+                String selectionArgs[] = {"0"};
                 cursor = context.getContentResolver().query(
-                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, vColumns, null,
-                        null, vOrderBy);
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, vColumns, selection,
+                        selectionArgs, vOrderBy);
                 break;
+            //public final Cursor query (Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
         }
     }
 
