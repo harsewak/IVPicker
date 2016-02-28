@@ -84,7 +84,7 @@ public class Gallery extends Fragment implements GalleryAdapter.OnItemClickListe
     @Override
     public void onItemClick(String path) {
         if (activity instanceof OnFragmentResult) {
-            if (multiSelection) {
+            if (multiSelection && adapter.getSelectionCount() > 1) {
                 changeSelectionCount(adapter.getSelectionCount());
             } else {
                 ArrayList<String> paths = new ArrayList<>();
