@@ -151,6 +151,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 Toast.makeText(context, "Maximum " + selectionLimit + " selection allowed", Toast.LENGTH_SHORT).show();
                             else {
                                 selections.remove(path);
+                                notifyDataSetChanged();
                                 onItemClickListener.onItemClick(path);
                             }
                         }
