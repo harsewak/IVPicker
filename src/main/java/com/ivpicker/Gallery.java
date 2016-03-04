@@ -77,6 +77,7 @@ public class Gallery extends Fragment implements GalleryAdapter.OnItemClickListe
         adapter = new GalleryAdapter(type, activity);
         adapter.setOnItemClickListener(this);
         adapter.setMultiSelection(multiSelection);
+        adapter.setselectionLimit(selectionLimit);
         recyclerViewGalleryImages.setAdapter(adapter);
         return view;
     }
@@ -84,7 +85,7 @@ public class Gallery extends Fragment implements GalleryAdapter.OnItemClickListe
     @Override
     public void onItemClick(String path) {
         if (activity instanceof OnFragmentResult) {
-            if (multiSelection && adapter.getSelectionCount() > 1) {
+            if (multiSelection && adapter.isSelecting) {
                 changeSelectionCount(adapter.getSelectionCount());
             } else {
                 ArrayList<String> paths = new ArrayList<>();
@@ -99,6 +100,7 @@ public class Gallery extends Fragment implements GalleryAdapter.OnItemClickListe
         if (mActionMode != null) {
             mActionMode.setTitle(selected + " selected");
             if (selected == 0) {
+                adapter.isSelecting = false;
                 mActionMode.finish();
                 mActionMode = null;
             }

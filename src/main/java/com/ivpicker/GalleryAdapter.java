@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +30,14 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     OnItemClickListener onItemClickListener;
     int SIZE = 150;
     Set<String> selections;
+    Set<Integer> selectedPositions;
     boolean multiSelection;
+    boolean isSelecting = false;
     int selectionLimit = 10;
 
     GalleryAdapter(int type, Context context) {
         selections = new HashSet<>();
+        selectedPositions = new HashSet<>();
         this.context = context;
         this.type = type;
         switch (type) {
@@ -75,7 +79,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void clearSelection() {
         selections.clear();
-        notifyDataSetChanged();
+        for (Integer position : selectedPositions) {
+            notifyItemChanged(position);
+        }
+        selectedPositions.clear();
     }
 
     public ArrayList<String> getSelection() {
@@ -85,9 +92,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     interface OnItemClickListener {
-        public void onItemClick(String path);
+        void onItemClick(String path);
 
-        public void onItemLongClick(String path);
+        void onItemLongClick(String path);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -105,6 +112,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 int dataColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
                 final String path = cursor.getString(dataColumnIndex);
                 handleClickEvents(path, galleryViewHolder);
+                galleryViewHolder.itemView.setTag(position);
                 galleryViewHolder.imageViewThumbnail.setTag(id);
                 loadImageThumbnail(id, path, galleryViewHolder.imageViewThumbnail);
                 break;
@@ -114,6 +122,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 int id = cursor.getInt(columnIndex);
                 int dataColumnIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATA);
                 final String path = cursor.getString(dataColumnIndex);
+                galleryViewHolder.itemView.setTag(position);
                 handleClickEvents(path, galleryViewHolder);
                 galleryViewHolder.imageViewThumbnail.setTag(id);
                 loadVideoThumbnail(id, path, galleryViewHolder.imageViewThumbnail);
@@ -126,7 +135,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return selections.size();
     }
 
-    private void handleClickEvents(final String path, GalleryViewHolder galleryViewHolder) {
+    private void handleClickEvents(final String path, final GalleryViewHolder galleryViewHolder) {
         if (selections.contains(path)) {
             galleryViewHolder.frameLayoutSelected.setVisibility(View.VISIBLE);
         } else {
@@ -137,21 +146,26 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View view) {
                 if (onItemClickListener != null) {
                     if (multiSelection) {
+                        int position = Integer.parseInt(galleryViewHolder.itemView.getTag().toString());
                         if (selections.size() < selectionLimit) {
                             if (selections.size() != 0) {
-                                if (!selections.contains(path))
+                                if (!selections.contains(path)) {
                                     selections.add(path);
-                                else
+                                    selectedPositions.add(position);
+                                } else {
                                     selections.remove(path);
-                                notifyDataSetChanged();
+                                    selectedPositions.remove(position);
+                                }
+                                notifyItemChanged(position);
                             }
                             onItemClickListener.onItemClick(path);
                         } else {
                             if (!selections.contains(path))
-                                Toast.makeText(context, "Maximum " + selectionLimit + " selection allowed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Maximum " + selectionLimit + " selection", Toast.LENGTH_SHORT).show();
                             else {
                                 selections.remove(path);
-                                notifyDataSetChanged();
+                                selectedPositions.remove(position);
+                                notifyItemChanged(position);
                                 onItemClickListener.onItemClick(path);
                             }
                         }
@@ -167,8 +181,11 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 public boolean onLongClick(View view) {
                     if (onItemClickListener != null) {
                         if (selections.size() == 0) {
+                            isSelecting = true;
+                            int position = Integer.parseInt(galleryViewHolder.itemView.getTag().toString());
                             selections.add(path);
-                            notifyDataSetChanged();
+                            selectedPositions.add(position);
+                            notifyItemChanged(position);
                             onItemClickListener.onItemLongClick(path);
                         }
                     }
