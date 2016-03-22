@@ -109,6 +109,7 @@ public class Gallery extends Fragment implements GalleryAdapter.OnItemClickListe
 
     ActionMode mActionMode;
 
+
     @Override
     public void onItemLongClick(String path) {
         if (mActionMode == null)

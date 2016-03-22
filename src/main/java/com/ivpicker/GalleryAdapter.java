@@ -148,17 +148,20 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (multiSelection) {
                         int position = Integer.parseInt(galleryViewHolder.itemView.getTag().toString());
                         if (selections.size() < selectionLimit) {
-                            if (selections.size() != 0) {
-                                if (!selections.contains(path)) {
-                                    selections.add(path);
-                                    selectedPositions.add(position);
-                                } else {
-                                    selections.remove(path);
-                                    selectedPositions.remove(position);
-                                }
-                                notifyItemChanged(position);
+                            if (!selections.contains(path)) {
+                                selections.add(path);
+                                selectedPositions.add(position);
+                            } else {
+                                selections.remove(path);
+                                selectedPositions.remove(position);
                             }
-                            onItemClickListener.onItemClick(path);
+                            notifyItemChanged(position);
+                            if (selections.size() == 1) {
+                                isSelecting = true;
+                                onItemClickListener.onItemLongClick(path);
+                            } else {
+                                onItemClickListener.onItemClick(path);
+                            }
                         } else {
                             if (!selections.contains(path))
                                 Toast.makeText(context, "Maximum " + selectionLimit + " selection", Toast.LENGTH_SHORT).show();
